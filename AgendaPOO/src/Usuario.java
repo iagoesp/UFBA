@@ -5,9 +5,6 @@ public class Usuario {
 	private String usuario;
 	private String senha;
 	private String email;
-	private ArrayList<Nota> nota;
-	private ArrayList<Lembrete> lembrete;
-	private ArrayList<Compromisso> compromisso;
 	
 	public Usuario(String nome, String usuario, String senha, String email) {
 		this.nome = nome;
@@ -42,14 +39,6 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public ArrayList<Nota> getNotas() {
-		return nota;
-	}
-	public ArrayList<Lembrete> getLembretes() {
-		return lembrete;
-	}
-	public ArrayList<Compromisso> getCompromissos() {
-		return compromisso;
-	}
+
 	
 }

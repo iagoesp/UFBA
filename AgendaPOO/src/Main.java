@@ -17,12 +17,13 @@ import java.io.File;
 public class Main {
 
 	private JFrame frmMagenda;
-	private ArrayList<Agenda> listaAgendas;
-	private Cadastro cadastro; 
 	private JTextField textField;
 	private JLabel lblSenha;
 	private JPasswordField passwordField;
 	private JLabel lblSair;
+	
+	private ArrayList<Agenda> listaAgendas;
+	private Cadastro cadastro; 
 	private Arquivo arquivo;
 	private static File Login;
 
@@ -47,7 +48,6 @@ public class Main {
 	 */
 	public Main() {
 		initialize();
-		
 	}
 
 	/**

@@ -1,9 +1,13 @@
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class Agenda {
 	private Usuario usuario;
+	private ArrayList<Nota> nota;
+	private ArrayList<Lembrete> lembrete;
+	private ArrayList<Compromisso> compromisso;
 	
 	public Agenda(Usuario usuario) {
 		this.usuario = usuario;
@@ -65,5 +69,14 @@ public class Agenda {
 	}
 	public void removerCompromisso(Compromisso compromisso) {
 		usuario.getCompromissos().remove(compromisso);
+	}
+	public ArrayList<Nota> getNotas() {
+		return nota;
+	}
+	public ArrayList<Lembrete> getLembretes() {
+		return lembrete;
+	}
+	public ArrayList<Compromisso> getCompromissos() {
+		return compromisso;
 	}
 }

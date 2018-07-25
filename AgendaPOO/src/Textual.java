@@ -18,5 +18,7 @@ public abstract class Textual implements MetodosTextual{
 	public void setTexto(String texto) {
 		this.texto = texto;
 	}
+	
+	// abstract imprime texto
 
 }
