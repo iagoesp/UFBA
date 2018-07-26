@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.AbstractDocument;
@@ -37,11 +38,18 @@ public class Cadastro {
 	private JButton btnCancelar;
 	private JButton btnVerificar;
 
-	private boolean id = false;
-	private boolean senha = false;
-	private boolean email = false;
+	private boolean nomeB = false;
+	private boolean senhaB = false;
+	private boolean emailB = false;
+	private Agenda agenda;
+	private Usuario usuario;
+	private String nome;
+	private String id;
+	private String email;
+	private String senha;
 	private JLabel Dígitos;
 	private String pSenha;
+	protected boolean idB;
 	/**
 	 * Launch the application.
 	 */
@@ -90,12 +98,16 @@ public class Cadastro {
 		JIDUsuario = new JTextField();
 		JIDUsuario.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				if(JIDUsuario.getText().length()!=0) {
+			public void keyReleased(KeyEvent arg0) {
+				if(JIDUsuario.getText().length()!=0 && JIDUsuario.getText().length() >= 4) {
 					btnVerificar.setEnabled(true);
+					idB = true;
 				}
-				else
+				else if(JIDUsuario.getText().length() < 4) {
 					btnVerificar.setEnabled(false);
+					habilitar(false);
+					idB = false;
+				}
 			}
 		});
 		JIDUsuario.setColumns(10);
@@ -113,7 +125,25 @@ public class Cadastro {
 		btnVerificar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+				String usuario = JIDUsuario.getText();
+				if(usuario.length() >= 4 ) {
+					try {
+						for(Agenda lista : Main.getListaAgendas()) {
+							String usuarioLista = lista.getUsuario().getNome();
+							if(usuario.equals(usuarioLista)) {
+								habilitar(false);
+								JOptionPane.showMessageDialog(null, "Já existe esse ID do usuário. Insira outro novamente!", "ID existente!", JOptionPane.INFORMATION_MESSAGE);
+							}
+							else {
+								habilitar(true);
+								JOptionPane.showMessageDialog(null, "ID disponível para uso!", "ID disponível!", JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+					}catch(NullPointerException e1) {
+						habilitar(true);
+						JOptionPane.showMessageDialog(null, "ID disponível para uso!", "ID disponível!", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
 			}
 		});
 		btnVerificar.setEnabled(false);
@@ -134,6 +164,18 @@ public class Cadastro {
 		frame.getContentPane().add(lblNomeDoUsurio, gbc_lblNomeDoUsurio);
 		
 		JNomeUsuario = new JTextField();
+		JNomeUsuario.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(JNomeUsuario.getText().length()>=4) {
+					nomeB = true;
+				}
+				else {
+					nomeB = false;
+				}
+				System.out.println(nomeB);
+			}
+		});
 		JNomeUsuario.setEditable(false);
 		JNomeUsuario.setColumns(10);
 		GridBagConstraints gbc_JNomeUsuario = new GridBagConstraints();
@@ -157,6 +199,14 @@ public class Cadastro {
 		frame.getContentPane().add(lblEmail, gbc_lblEmail);
 		
 		JEmail = new JTextField();
+		JEmail.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String email = JEmail.getText();
+				emailB = verificarEmail(email);	
+				System.out.println(emailB);
+			}
+		});
 		JEmail.setEditable(false);
 		JEmail.setColumns(10);
 		GridBagConstraints gbc_JEmail = new GridBagConstraints();
@@ -168,6 +218,7 @@ public class Cadastro {
 		gbc_JEmail.gridy = 8;
 		frame.getContentPane().add(JEmail, gbc_JEmail);
 		((AbstractDocument) JEmail.getDocument()).setDocumentFilter(new RandomValidator(30, true, true, true, false, '@', '-', '_', '.'));
+		
 		
 		lblSenha = new JLabel("Senha");
 		GridBagConstraints gbc_lblSenha = new GridBagConstraints();
@@ -214,13 +265,14 @@ public class Cadastro {
 			public void keyReleased(KeyEvent arg0) {
 				String pcSenha = passwordField_1.getText();
 				if(pcSenha.equals(pSenha)){
-					senha = true;
+					senhaB = true;
 					passwordField_1.setBackground(Color.WHITE);
 				}
 				else {
 					passwordField_1.setBackground(Color.RED);
-					senha = false;
+					senhaB = false;
 				}
+				System.out.println(senhaB);
 			}
 		});
 		passwordField_1.setEditable(false);
@@ -243,6 +295,15 @@ public class Cadastro {
 		frame.getContentPane().add(Dígitos, gbc_Dígitos);
 		
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Object[] options = { "OK", "CANCEL" };
+				JOptionPane.showOptionDialog(null, "Deseja cancelar o cadastro?", "Cancelar",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+			}
+		});
 		GridBagConstraints gbc_btnCancelar = new GridBagConstraints();
 		gbc_btnCancelar.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCancelar.gridx = 1;
@@ -250,12 +311,42 @@ public class Cadastro {
 		frame.getContentPane().add(btnCancelar, gbc_btnCancelar);
 		
 		btnCadastrar = new JButton("Cadastrar");
-		btnCadastrar.setEnabled(false);
+		btnCadastrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(nomeB && senhaB && emailB) {
+					usuario = new Usuario(id, nome, email, senha);
+					agenda = new Agenda(usuario);
+					Main.getListaAgendas().add(agenda);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Cadastro não finalizado! Verifique e complete os campos acima", "Cadastro não finalizado", JOptionPane.ERROR_MESSAGE);
+			}
+		});
 		GridBagConstraints gbc_btnCadastrar = new GridBagConstraints();
 		gbc_btnCadastrar.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCadastrar.gridx = 3;
 		gbc_btnCadastrar.gridy = 13;
 		frame.getContentPane().add(btnCadastrar, gbc_btnCadastrar);
+	}
+	
+	private void habilitar(boolean valor) {
+		JNomeUsuario.setEditable(valor);
+		JEmail.setEditable(valor);
+		passwordField.setEditable(valor);
+	}
+	
+	private boolean verificarEmail(String email) {
+		boolean arroba = false, dot = false;
+		for(int i = 0; i < email.length() ; i++) {
+			if(email.charAt(i) == '@')
+				arroba = true;
+			if(email.charAt(i) == '.' && arroba)
+				dot = true;
+			if(arroba && dot)
+				return true;
+		}
+		return false;		
 	}
 
 }

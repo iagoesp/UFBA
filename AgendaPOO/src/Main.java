@@ -1,5 +1,6 @@
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.GroupLayout;
@@ -15,16 +16,16 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 public class Main {
-
 	private JFrame frmMagenda;
 	private JTextField textField;
 	private JLabel lblSenha;
 	private JPasswordField passwordField;
 	private JLabel lblSair;
 	
-	private ArrayList<Agenda> listaAgendas;
+	private static ArrayList<Agenda> listaAgendas;
 	private Cadastro cadastro; 
 	private Arquivo arquivo;
+	private Scanner scanner;
 	private static File Login;
 
 	/**
@@ -47,7 +48,9 @@ public class Main {
 	 * Create the application.
 	 */
 	public Main() {
+		this.listaAgendas = null;
 		initialize();
+		
 	}
 
 	/**
@@ -84,9 +87,30 @@ public class Main {
 		});
 		
 		JButton btnCadastro = new JButton("Cadastro");
+		btnCadastro.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Cadastro cadastro = new Cadastro();
+				cadastro.main(null);
+			}
+		});
 		
 		lblSair = new JLabel("Sair");
 		lblSair.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+		JButton debug = new JButton("Debug");
+		debug.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					for(Agenda lista : listaAgendas) {					
+						System.out.println(lista.getUsuario());
+					}
+				}catch (NullPointerException e1){
+					System.out.println("Não há usuários");
+				}
+			}
+		});
 		GroupLayout groupLayout = new GroupLayout(frmMagenda.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -99,8 +123,11 @@ public class Main {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(18)
 					.addComponent(lblSair, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(203)
-					.addComponent(btnCadastro, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE))
+					.addGap(108)
+					.addComponent(debug, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnCadastro, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+					.addGap(32))
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(46)
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
@@ -121,7 +148,7 @@ public class Main {
 							.addComponent(lblUsurio))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(237)
-							.addComponent(textField)))
+							.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(18)
@@ -132,7 +159,7 @@ public class Main {
 								.addComponent(btnEntrar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(19)
-							.addComponent(passwordField)
+							.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addGap(2)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblEsqueceuASenha)
@@ -141,9 +168,15 @@ public class Main {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(7)
 							.addComponent(lblSair))
-						.addComponent(btnCadastro))
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnCadastro)
+							.addComponent(debug)))
 					.addGap(23))
 		);
 		frmMagenda.getContentPane().setLayout(groupLayout);
+	}
+
+	public static ArrayList<Agenda> getListaAgendas() {
+		return listaAgendas;
 	}
 }

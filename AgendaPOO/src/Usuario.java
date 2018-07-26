@@ -2,18 +2,15 @@ import java.util.ArrayList;
 
 public class Usuario {
 	private String nome;
-	private String usuario;
+	private String id;
 	private String senha;
 	private String email;
 	
-	public Usuario(String nome, String usuario, String senha, String email) {
+	public Usuario(String id, String nome, String email, String senha) {
 		this.nome = nome;
-		this.usuario = usuario;
+		this.id = id;
 		this.senha = senha;
 		this.email = email;
-		this.nota = null;
-		this.lembrete = null;
-		this.compromisso = null;
 	}
 	public String getNome() {
 		return nome;
@@ -22,10 +19,10 @@ public class Usuario {
 		this.nome = nome;
 	}
 	public String getUsuario() {
-		return usuario;
+		return id;
 	}
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
+	public void setUsuario(String id) {
+		this.id = id;
 	}
 	public String getSenha() {
 		return senha;
@@ -39,6 +36,5 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 	
 }
