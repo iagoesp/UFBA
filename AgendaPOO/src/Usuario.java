@@ -1,16 +1,16 @@
 import java.util.ArrayList;
 
 public class Usuario {
-	private String nome;
 	private String id;
-	private String senha;
+	private String nome;
 	private String email;
+	private String senha;
 	
 	public Usuario(String id, String nome, String email, String senha) {
-		this.nome = nome;
 		this.id = id;
-		this.senha = senha;
+		this.nome = nome;
 		this.email = email;
+		this.senha = senha;
 	}
 	public String getNome() {
 		return nome;

@@ -1,11 +1,13 @@
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JPasswordField;
@@ -14,6 +16,10 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
 	private JFrame frmMagenda;
@@ -27,6 +33,10 @@ public class Main {
 	private Arquivo arquivo;
 	private Scanner scanner;
 	private static File Login;
+	private Path loginPath;
+	private Path usuarioPath;
+	private List<String> loginFileContent;
+	private List<String> usuarioFileContent;
 
 	/**
 	 * Launch the application.
@@ -48,11 +58,44 @@ public class Main {
 	 * Create the application.
 	 */
 	public Main() {
-		this.listaAgendas = null;
+		this.listaAgendas = new ArrayList<Agenda>();
+		
 		initialize();
 		
 	}
 
+	public void antiinitialize() {
+		loginPath = Paths.get(System.getProperty("user.home"), "eclipse-workspace", "Agenda",
+				"Logins");
+		try {
+			loginFileContent = new ArrayList<>(Files.readAllLines(loginPath));
+			for(String allLogin : loginFileContent) {
+				usuarioPath = Paths.get(System.getProperty("user.home"), "eclipse-workspace", "Agenda",
+						allLogin);
+				usuarioFileContent = new ArrayList<>(Files.readAllLines(usuarioPath));
+				String id, nome, email, senha;
+				Usuario usuario;
+				Agenda agenda;
+				id = usuarioFileContent.get(0);
+				nome = usuarioFileContent.get(1);
+				email = usuarioFileContent.get(2);
+				senha = usuarioFileContent.get(3);
+				usuario = new Usuario(id, nome, email, senha);
+				
+			}
+		}catch(NullPointerException g) {
+			JOptionPane.showMessageDialog(null,
+		        "Não há usuários cadastros! Para inicializar a Agenda, cadastre-se!",
+		        "Não há usuários cadastros!",
+		        JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,
+		        "Não há usuários cadastros! Para inicializar a Agenda, cadastre-se!",
+		        "Não há usuários cadastros!",
+		        JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */

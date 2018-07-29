@@ -23,8 +23,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
 
-public class Cadastro {
+public class Cadastro{
 	
 	private JFrame frame;
 	private JTextField JIDUsuario;
@@ -38,6 +43,8 @@ public class Cadastro {
 	private JButton btnCancelar;
 	private JButton btnVerificar;
 
+	private static File arquivoLogins;
+	private static File arquivoUsuario;
 	private boolean nomeB = false;
 	private boolean senhaB = false;
 	private boolean emailB = false;
@@ -126,6 +133,7 @@ public class Cadastro {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String usuario = JIDUsuario.getText();
+				System.out.println("aqui");
 				if(usuario.length() >= 4 ) {
 					try {
 						for(Agenda lista : Main.getListaAgendas()) {
@@ -217,7 +225,7 @@ public class Cadastro {
 		gbc_JEmail.gridx = 1;
 		gbc_JEmail.gridy = 8;
 		frame.getContentPane().add(JEmail, gbc_JEmail);
-		((AbstractDocument) JEmail.getDocument()).setDocumentFilter(new RandomValidator(30, true, true, true, false, '@', '-', '_', '.'));
+		((AbstractDocument) JEmail.getDocument()).setDocumentFilter(new RandomValidator(30, true, false, true, false, '@', '-', '_', '.'));
 		
 		
 		lblSenha = new JLabel("Senha");
@@ -318,6 +326,49 @@ public class Cadastro {
 					usuario = new Usuario(id, nome, email, senha);
 					agenda = new Agenda(usuario);
 					Main.getListaAgendas().add(agenda);
+					try {
+						arquivoUsuario = new File(id);
+						arquivoUsuario.createNewFile();
+						FileWriter fileWriter;
+						try {
+							fileWriter = new FileWriter(arquivoUsuario.getName(), true);
+							BufferedWriter bw = new BufferedWriter(fileWriter);
+							bw.write("\n" + id);
+							bw.write("\n" + nome);
+							bw.write("\n" + email);
+							bw.write("\n" + senha);
+							bw.write("\n" + "$");
+							bw.close();
+							arquivoLogins = new File("Logins");
+							arquivoLogins.createNewFile();
+							FileWriter fileWriterLogins;
+							try {
+								fileWriterLogins = new FileWriter(arquivoLogins.getName(), true);
+								BufferedWriter bwL = new BufferedWriter(fileWriterLogins);
+								bwL.write(id + ":" + senha + "\n");
+								bwL.close();
+								Arquivo.criarArquivo(id+"C");
+								Arquivo.criarArquivo(id+"L");
+								Arquivo.criarArquivo(id+"N");
+								Arquivo.criarArquivo(id+"T");
+								int resposta = JOptionPane.showConfirmDialog(null, "Deseja realizar outro cadastro?",
+										"Cadastrar novamente?", JOptionPane.YES_NO_OPTION);
+								if (resposta == 0) {
+									frame.setVisible(false);
+									Cadastro novo = new Cadastro();
+									novo.frame.setVisible(true);
+								} else if (resposta == 1) {
+									frame.setVisible(false);
+								}
+							} catch (IOException e2) {
+								JOptionPane.showMessageDialog(null, "Erro em gravar os arquivos. Não foi possível realizar o seu cadastrar! Feche o aplicativo e tente novamente.", "Cadastro interrompido", JOptionPane.ERROR_MESSAGE);
+							}
+						} catch (IOException e2) {
+							JOptionPane.showMessageDialog(null, "Não foi possível realizar o seu cadastrar! Feche o aplicativo e tente novamente.", "Cadastro interrompido", JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (IOException e2) {
+						JOptionPane.showMessageDialog(null, "Não foi possível se cadastrar! Verifique seus campos acima, corrija-os ou fecha o aplicativo e tente novamente.", "Cadastro interrompido", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Cadastro não finalizado! Verifique e complete os campos acima", "Cadastro não finalizado", JOptionPane.ERROR_MESSAGE);
